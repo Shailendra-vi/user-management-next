@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/users/[page]/page.jsx", "app/users/[page]/UsersClient.jsx", "components/ui/Filters.jsx", "components/ui/TableComponent.jsx", "components/ui/Pagination.jsx"],
   "exclude": ["node_modules"]
 }
