@@ -36,10 +36,9 @@ const UsersPage = () => {
     queryFn: async () => {
       const response = await fetch(config.url || 'https://jsonplaceholder.typicode.com/users');
       if (!response.ok) throw new Error('Network response was not ok');
-      return response.json();
-    },
-    onSuccess: (data) => {
-      dispatch(setUsers(data));
+      const data = response.json();
+      dispatch(setUsers(data))
+      return data;
     },
     retry: 1,
   });
