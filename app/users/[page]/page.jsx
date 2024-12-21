@@ -29,28 +29,25 @@ export default function App() {
 
 const UsersPage = () => {
   const dispatch = useDispatch();
-  const { users, isLoading, error } = useSelector((state) => state.users);
+  const { users, isLoading: reduxLoading, error: reduxError } = useSelector((state) => state.users);
 
-  const { data, isLoading: queryLoading, error: queryError } = useQuery({
+  const { data: queryData, isLoading: queryLoading, error: queryError } = useQuery({
     queryKey: ['repoData'],
     queryFn: async () => {
-      if (!users || users.length === 0) {
-        try {
-          const response = await fetch(config.url || 'https://jsonplaceholder.typicode.com/users');
-          const data = await response.json();
-          dispatch(setUsers(data));
-        } catch (error) {
-          dispatch(setError(error.message));
-        }
-        return data;
-      }
-      return users;
+      const response = await fetch(config.url || 'https://jsonplaceholder.typicode.com/users');
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
     },
-    enabled: !users || users.length === 0,
+    onSuccess: (data) => {
+      dispatch(setUsers(data));
+    },
+    retry: 1,
   });
 
-  if (queryLoading || isLoading) return <Spinner />;
-  if (queryError || error) return 'An error has occurred: ' + (error || queryError.message);
+  const usersToRender = users?.length > 0 ? users : queryData;
 
-  return <UsersClient />;
+  if (queryLoading || reduxLoading) return <Spinner />;
+  if (queryError || reduxError) return `An error has occurred: ${reduxError || queryError.message}`;
+
+  return usersToRender ? <UsersClient users={usersToRender} /> : null;
 };
